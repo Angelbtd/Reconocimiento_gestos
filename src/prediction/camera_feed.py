@@ -2,7 +2,7 @@ import cv2
 import os
 
 # Define los gestos que vas a capturar
-gestures = ["ok", "pausa", "pulgar_arriba", "saludos", "adios", "yo", "gracias", "perdon", "no", "hola"]
+gestures = ["ok", "pausa", "pulgar_arriba", "saludos", "adios", "yo", "gracias", "perdon", "no"]
 
 # Ruta donde se guardarán las imágenes
 data_dir = "data/raw"  # Ruta para las imágenes crudas
@@ -32,7 +32,6 @@ print("6: yo")
 print("7: gracias")
 print("8: perdon")
 print("9: no")
-print("10: hola")
 
 while True:
     ret, frame = cap.read()
@@ -66,8 +65,6 @@ while True:
         gesture = "perdon"
     elif key == ord('9'):
         gesture = "no"
-    elif key == ord('10'):
-        gesture = "hola"
     elif key == ord('q'):  # Presiona 'q' para salir
         break
     else:
