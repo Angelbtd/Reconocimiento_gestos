@@ -1,44 +1,50 @@
+import os
 import cv2
 import numpy as np
-import os
+from sklearn.preprocessing import LabelEncoder
+from tensorflow.keras.preprocessing.image import img_to_array
 
-# Aquí asumo que tienes la ruta a las imágenes
-image_size = (64, 64)  # Tamaño de imagen deseado
-gestures = ["ok", "pausa", "pulgar_arriba", "saludos", "adios", "yo", "gracias", "perdon", "no", "hola"]
+# Define los gestos
+gestures = ["ok", "pausa", "pulgar_arriba", "saludos", "adios", "yo", "gracias", "perdon", "no", "uno", "dos", "tres", "cuatro", "cinco"]
+
+# Directorio donde están las imágenes crudas
 data_dir = "data/raw"
 
-data = []
+# Listas para las imágenes y etiquetas
+images = []
 labels = []
 
+# Recorremos los gestos y cargamos las imágenes
 for gesture in gestures:
-    gesture_path = os.path.join(data_dir, gesture)
-    if not os.path.exists(gesture_path):
+    gesture_dir = os.path.join(data_dir, gesture)
+    
+    # Asegurarse de que la carpeta existe
+    if not os.path.exists(gesture_dir):
+        print(f"Advertencia: La carpeta {gesture_dir} no existe.")
         continue
-
-    for filename in os.listdir(gesture_path):
-        img_path = os.path.join(gesture_path, filename)
-        # Leer la imagen
-        img = cv2.imread(img_path)
-        if img is None:
-            continue
+    
+    for img_name in os.listdir(gesture_dir):
+        img_path = os.path.join(gesture_dir, img_name)
         
-        # Redimensionar la imagen
-        img_resized = cv2.resize(img, image_size)
+        # Cargar la imagen y convertirla en un array
+        img = cv2.imread(img_path)
+        img = cv2.resize(img, (64, 64))  # Redimensionamos la imagen
+        img = img_to_array(img)
+        
+        images.append(img)
+        labels.append(gesture)
 
-        # Convertir a formato de arreglo
-        data.append(img_resized)
-        labels.append(gestures.index(gesture))
-
-# Convertir a array de NumPy
-data = np.array(data)
+# Convertimos las imágenes y etiquetas a arrays de numpy
+images = np.array(images, dtype="float32") / 255.0  # Normalización
 labels = np.array(labels)
 
-# Verificar que los datos tengan la forma correcta
-print("Datos procesados: ", data.shape)
-print("Etiquetas procesadas: ", labels.shape)
+# Codificamos las etiquetas
+label_encoder = LabelEncoder()
+labels = label_encoder.fit_transform(labels)
 
-# Guardar los datos procesados
-np.save('data/processed_data.npy', data)
-np.save('data/processed_labels.npy', labels)
+# Guardamos los datos procesados
+np.save("data/images.npy", images)
+np.save("data/labels.npy", labels)
+np.save("data/label_encoder.npy", label_encoder.classes_)
 
-print("Datos y etiquetas guardados exitosamente.")
+print("Datos procesados y guardados correctamente.")

@@ -1,16 +1,21 @@
 import cv2
 import os
 
-# Define las carpetas donde guardarás las imágenes de cada gesto
-gestures = ["ok", "pause", "thumbs_up"]
-data_dir = "data/raw"  # Ruta donde se guardarán las imágenes
-img_size = (64, 64)  # Tamaño de las imágenes a guardar
+# Define los gestos que vas a capturar
+gestures = ["ok", "pausa", "pulgar_arriba", "saludos", "adios", "yo", "gracias", "perdon", "no", "uno", "dos", "tres", "cuatro", "cinco"]
+
+# Ruta donde se guardarán las imágenes
+data_dir = "data/raw"  # Ruta para las imágenes crudas
+
+# Asegurarse de que la ruta 'data/raw' y las subcarpetas de los gestos existan
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
 
 # Crear las carpetas para cada gesto si no existen
 for gesture in gestures:
     gesture_path = os.path.join(data_dir, gesture)
-    if not os.path.exists(gesture_path):
-        os.makedirs(gesture_path)
+    # Se asegura de crear la carpeta si no existe, sin causar errores si ya existe
+    os.makedirs(gesture_path, exist_ok=True)
 
 # Inicia la cámara
 cap = cv2.VideoCapture(0)
@@ -19,8 +24,19 @@ cap = cv2.VideoCapture(0)
 print("Presiona 'q' para salir")
 print("Presiona la tecla correspondiente para capturar imágenes:")
 print("1: ok")
-print("2: pause")
-print("3: thumbs_up")
+print("2: pausa")
+print("3: pulgar_arriba")
+print("4: saludos")
+print("5: adios")
+print("6: yo")
+print("7: gracias")
+print("8: perdon")
+print("9: no")
+print("a: uno")
+print("s: dos")
+print("d: tres")
+print("f: cuatro")
+print("g: cinco")
 
 while True:
     ret, frame = cap.read()
@@ -39,17 +55,39 @@ while True:
     if key == ord('1'):
         gesture = "ok"
     elif key == ord('2'):
-        gesture = "pause"
+        gesture = "pausa"
     elif key == ord('3'):
-        gesture = "thumbs_up"
-    elif key == ord('q'):
+        gesture = "pulgar_arriba"
+    elif key == ord('4'):
+        gesture = "saludos"
+    elif key == ord('5'):
+        gesture = "adios"
+    elif key == ord('6'):
+        gesture = "yo"
+    elif key == ord('7'):
+        gesture = "gracias"
+    elif key == ord('8'):
+        gesture = "perdon"
+    elif key == ord('9'):
+        gesture = "no"
+    elif key == ord('a'):  # Nueva tecla para el gesto "uno"
+        gesture = "uno"
+    elif key == ord('s'):  # Nueva tecla para el gesto "dos"
+        gesture = "dos"
+    elif key == ord('d'):  # Nueva tecla para el gesto "tres"
+        gesture = "tres"
+    elif key == ord('f'):  # Nueva tecla para el gesto "cuatro"
+        gesture = "cuatro"
+    elif key == ord('g'):  # Nueva tecla para el gesto "cinco"
+        gesture = "cinco"
+    elif key == ord('q'):  # Presiona 'q' para salir
         break
     else:
         continue
 
     # Guarda la imagen en la carpeta correspondiente
     img_path = os.path.join(data_dir, gesture, f"{gesture}_{len(os.listdir(os.path.join(data_dir, gesture)))}.jpg")
-    img_resized = cv2.resize(frame, img_size)  # Redimensiona la imagen
+    img_resized = cv2.resize(frame, (64, 64))  # Redimensiona la imagen
     cv2.imwrite(img_path, img_resized)
 
     print(f"Imagen de {gesture} guardada en {img_path}")
